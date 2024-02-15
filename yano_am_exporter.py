@@ -33,11 +33,11 @@ def save(operator, context, filepath=""):
 
   # Scene Markers
   # https://docs.blender.org/api/current/bpy.types.Scene.html#bpy.types.Scene.timeline_markers
-  jsonData['markers'] = []
+  jsonData['scene_markers'] = []
   for k, v in scene.timeline_markers.items():
     frame = v.frame
     frame_time = frame_to_time(frame, fps)
-    jsondata['markers'].append({
+    jsondata['scene_markers'].append({
         'name': v.name,
         'time': frame_time,
         'frame': frame
