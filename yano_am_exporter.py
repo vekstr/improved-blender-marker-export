@@ -28,19 +28,40 @@ def save(operator, context, filepath=""):
   fps = scene.render.fps
   fps_base = scene.render.fps_base
 
-  # Markers
-  # https://docs.blender.org/api/current/bpy.types.Scene.html#bpy.types.Scene.timeline_markers
-  markers = scene.timeline_markers
+  # Prepare an empty JSON data.
   jsonData = {}
+
+  # Scene Markers
+  # https://docs.blender.org/api/current/bpy.types.Scene.html#bpy.types.Scene.timeline_markers
   jsonData['markers'] = []
   for k, v in scene.timeline_markers.items():
     frame = v.frame
     frame_time = frame_to_time(frame, fps)
-    jsonData['markers'].append({
+    jsondata['markers'].append({
         'name': v.name,
         'time': frame_time,
         'frame': frame
     })
+
+  # Action Markers
+  # https://docs.blender.org/api/current/bpy.types.Action.html#bpy.types.Action.pose_markers
+  jsonData['action_markers'] = []
+  for action in bpy.data.actions:
+    if len(action.pose_markers) == 0:
+        continue
+
+    actionMarkers = {}
+    actionMarkers['action'] = action.name
+    actionMarkers['markers'] = []
+    for marker in action.pose_markers:
+        frame = marker.frame
+        frame_time = frame_to_time(frame, fps)
+        actionMarkers['markers'].append({
+            'name': marker.name,
+            'time': frame_time,
+            'frame': frame
+        })
+    jsonData['action_markers'].append(actionMarkers)
 
   write_file( filepath, jsonData )
   return {"FINISHED"}
